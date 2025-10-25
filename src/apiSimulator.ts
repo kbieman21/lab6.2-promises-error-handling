@@ -19,18 +19,37 @@ const products: Product[] = [
 ];
 
 //Base interface for SalesReport
-interface SalesReport {
+interface Sales {
     totalSales: number;
     unitSold: number;
     averagePrice:number;
 }
 
 //an object salesReport of the above SalesReport instance/type
-const salesReport: SalesReport = {
+const salesReport: Sales[] = [{
     totalSales: 150,
     unitSold: 10,
     averagePrice: 15
-};
+}];
+
+
+// Custom NetworkError class to handle network related issues
+export class NetworkError extends Error {
+    name:string;
+    constructor(message:string){
+         super(message)
+         this.name = "NetworkError";
+    }   
+}
+
+// Custom DataError class to handle data related issues
+export class DataError extends Error {
+    name: string;
+    constructor(message:string){
+        super(message);
+        this.name = "DataError"
+    }
+}
 
 //Declare the data of the review by lookup mechanism
 const dataReview: {[id:number]:string[]} = {
@@ -47,7 +66,8 @@ export const fetchProductCatalog = (): Promise<Product[]> =>{
             if(Math.random() < 0.9){
                 resolve(products)
             }else{
-                reject('Failed to fetch product catalog!!!!')
+                // reject('Failed to fetch product catalog!!!!')
+                 reject(new NetworkError("Failed to fetch product catalog"))
             }
         }, 1000);
     });
@@ -60,107 +80,32 @@ export const fetchProductReviews = (productId: number): Promise<string[]> =>{
         if(productId){
            const reviews= dataReview[productId] || ['No data found']
             setTimeout(()=>{
-                if(Math.random() < 0.5){
+                if(Math.random() < 0.9){
                 resolve(reviews);
             }else{
-                reject(`Failed to fetch reviews for product ID ${productId}`);
+                // reject(`Failed to fetch reviews for product ID ${productId}`);
+                 reject(new NetworkError(`Failed to fetch review for ID ${productId} `))
             }
             }, 1500);
         }else{
-            reject('No id found')   // WE WANT TO ASK TEACHERS OR STUDENTS ABOUT THIS ISSUE
+            // reject('No id found')  
+             reject(new DataError(`No Id found ${productId}`))
         }
     });
 }  
 
   
-export const fetchSalesReport = ():Promise<SalesReport> =>{
-    return new Promise<SalesReport>((resolve, reject) =>{
+export const fetchSalesReport = ():Promise<Sales[]> =>{
+    return new Promise<Sales[]>((resolve, reject) =>{
         setTimeout(() => {
-            if(Math.random() < 0.6){
+            if(Math.random() < 0.9){
                 //typeof SalesReport = {123,456,789}
                 resolve(salesReport);
             }else{
-                reject('Failed to fetch sales report')
+                // reject('Failed to fetch sales report')
+                 reject(new NetworkError("Failed to fetch sales report"));
             }
     }, 1000);
 });
 }
 
-
-
-
-
-
-
-
-
-
-
-//=======================================================================================
-
-
-// interface SalesReport{
-//     totalSales: number,
-//     unitsSold: number,
-//     averagePrice: number
-// }
-
-
-//Base interface
-// interface Product{
-//     id:number;
-//     name:string;
-//     price:number;
-//     //review?: string
-// }
-
-// //an object product of the above Product instance/type
-// const relatedProducts: Product[] = [
-//         {id: 1, name: 'mouse', price: 20},
-//         {id: 2, name: 'monitor', price: 80}
-// ]
-
-// //
-// function getProductDetails() {
-//     return new Promise<Product>((resolve, _reject) => {
-//         const product: Product = {id: 3, name: "Keyboard", price: 50};
-
-//         setTimeout(() => resolve(product), 1000)
-//     });
-// }
-
-
-// function getProductReviews() {
-//     return new Promise<string[]>((resolve, _reject) => {
-//         const reviews: string[] = ['good product', 'excellent product'];
-//         setTimeout(() => resolve(reviews), 1000); 
-//     })
-// }
-
-// function getRelatedProducts() {
-//     return new Promise<Product[]>((resolve, _reject) => {
-//         if(Math.random() < 0.9){
-//             console.log('FailFailFailFailFailFail');
-            
-//         }else{
-//             setTimeout(() => resolve(relatedProducts), 1000);
-//         }
-        
-//     })
-// }
-
-
-// fetchProductCatalog()
-//     .then(product => {
-//         console.log('call 1', product)
-//         return fetchProductReviews();
-//     })
-//     .then(reviews => {
-//         console.log('call 2', reviews);
-//         return fetchSalesReport();
-//     })
-//     .then(relatedProducts => console.log('log 3', relatedProducts)).catch(error => {
-//         console.error('Error:', error);
-//     });
-
- 
